@@ -11,6 +11,7 @@ extern int
 encode(int argc, char * argv[])
 {
     // TODO
+    /*
     char input[20];
     char output[20];
 
@@ -36,6 +37,35 @@ encode(int argc, char * argv[])
     printf("%d\n", byteArray[0]);
     
     return (amountOfReadItems);
+    */
+
+    return (0);
+}
+
+/*
+int check(uint8_t incomingByte)
+{
+	uint8_t MSN =>> incomingByte;
+	uint8_t LSB = (incomingByte =& 0x0F);
+
+}
+*/
+
+uint8_t check2(uint8_t incomingNibble)
+{
+	uint8_t incoming = incomingNibble;
+	uint8_t tmp = (incomingNibble << 4);
+	incoming |= tmp;
+
+	uint8_t mask = 0x07;
+	uint8_t amountOfSetBits = 0;
+	for (int i = 1; i <= 4; i++)
+	{
+		amountOfSetBits += (incoming & mask);
+		mask <<= 1;
+	}
+
+	return amountOfSetBits;
 }
 
 //size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream);
