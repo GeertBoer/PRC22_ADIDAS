@@ -8,6 +8,26 @@
 #include "parity.h"
 
 
+void getByteArrayFromFile(char *fileToRead, uint8_t *byteArray, int byteArraySize)
+{
+	FILE *fp;
+    char filemode = 'r';
+    fp = fopen(fileToRead, &filemode);
+
+    fseek(fp, 0L, SEEK_SET);
+    fseek(fp, 0L, SEEK_END);
+    int sizeOfFile = ftell(fp);
+    fseek(fp, 0L, SEEK_SET);
+
+    int amountOfReadItems = fread(byteArray, 1, sizeOfFile, fp);
+    int dummy = amountOfReadItems;
+    amountOfReadItems = dummy;
+
+    printf("%d\n", byteArray[0]);
+    
+    //return (amountOfReadItems);
+}
+
 
 /*
 int check(uint8_t incomingByte)
@@ -39,16 +59,17 @@ uint8_t checkParityBit(uint8_t byte, uint8_t parityBit)
 {
 	//0b00000110;
 	uint8_t offset = 0;
+
 	switch (parityBit)
 	{
 		case 0:
 			offset = 0;
 			break;
 		case 1:
-			offset = 2;
+			offset = 3;
 			break;
 		case 2:
-			offset =1;
+			offset = 1;
 			break;
 		default:
 			return -1;
@@ -61,7 +82,6 @@ uint8_t checkParityBit(uint8_t byte, uint8_t parityBit)
 	
 	for (int i = 1; i <= 3; i++)
 	{
-		printf("%d\n", mask);
 		if (mask & byte)
 		{
 			amount++;
@@ -69,7 +89,6 @@ uint8_t checkParityBit(uint8_t byte, uint8_t parityBit)
 		mask <<= 1;
 	}
 
-	printf("Amount: %d\n", amount);
 	return (amount & 0x01);
 }
 
@@ -102,51 +121,41 @@ uint8_t checkByte(uint8_t byte, uint8_t *lsbParity, uint8_t *msbParity)
 
 extern int 
 encode(int argc, char * argv[])
-{
-    // TODO
-    /*
-    char input[20];
-    char output[20];
-
-    strcpy(input, argv[1]);
-    strcpy(output, argv[2]);
-    int mode = atoi(argv[3]);
-
-    printf("\nresults: %s %s %d\n", input, output, mode);
-
-    FILE *fp;
-    char filemode = 'r';
-    fp = fopen(input, &filemode);
-
-    uint8_t byteArray[20];
-
-    fseek(fp, 0L, SEEK_SET);
-    fseek(fp, 0L, SEEK_END);
-    int sizeOfFile = ftell(fp);
-    fseek(fp, 0L, SEEK_SET);
-
-    int amountOfReadItems = fread(byteArray, 1, sizeOfFile, fp);
-
-    printf("%d\n", byteArray[0]);
-    
-    return (amountOfReadItems);
-	*/
-	uint8_t lsbParity[3];
-	uint8_t msbParity[3];
-
-	uint8_t byte = 0b01101110;
-	uint8_t check = checkByte(byte, lsbParity, msbParity);
-
-	for (int i = 0; i <= 2; i++)
+{   
+	if (argc >= 4)
 	{
-		printf("LSB: p %d %d\n", i, lsbParity[i]);
-	}
-	for (int i = 0; i <= 2; i++)
-	{
-		printf("MSB: p %d %d\n", i, msbParity[i]);
-	}
+	    char input[20];
+	    char output[20];
 
-	printf("result: %d\n", check);
+	    strcpy(input, argv[1]);
+	    strcpy(output, argv[2]);
+	    int mode = atoi(argv[3]);
 
+	    printf("\nresults: %s %s %d\n", input, output, mode);
+	    uint8_t byteArray[20];
+	    getByteArrayFromFile(input, byteArray, 20);
+
+
+		uint8_t lsbParity[3];
+		uint8_t msbParity[3];
+
+		uint8_t check = checkByte(byteArray[0], lsbParity, msbParity);
+		uint8_t dummy = check;
+		check = dummy;
+
+		printf("\n");
+
+		for (int i = 0; i <= 2; i++)
+		{
+			printf("LSB: p%d: %d\n", i, lsbParity[i]);
+		}
+
+		printf("\n");
+
+		for (int i = 0; i <= 2; i++)
+		{
+			printf("MSB: p%d: %d\n", i, msbParity[i]);
+		}
+	}
     return (0);
 }
