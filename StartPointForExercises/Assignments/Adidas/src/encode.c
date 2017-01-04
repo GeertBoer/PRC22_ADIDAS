@@ -7,26 +7,23 @@
 #include "io.h"
 #include "parity.h"
 
-
-void getByteArrayFromFile(char *fileToRead, uint8_t *byteArray, int byteArraySize)
+uint8_t mergeOneByte(uint8_t nibble, uint8_t parity)
 {
-	FILE *fp;
-    char filemode = 'r';
-    fp = fopen(fileToRead, &filemode);
+	uint8_t workingByte = 0;
+	nibble <<= 3;
+	workingByte |= nibble;
+	workingByte |= parity;
 
-    fseek(fp, 0L, SEEK_SET);
-    fseek(fp, 0L, SEEK_END);
-    int sizeOfFile = ftell(fp);
-    fseek(fp, 0L, SEEK_SET);
+	return workingByte;
+}
 
-    int amountOfReadItems = fread(byteArray, 1, sizeOfFile, fp);
-    int dummy = amountOfReadItems;
-    amountOfReadItems = dummy;
+void mergeNibblesAndParity(uint8_t byte, uint8_t lsbParity, uint8_t msbParity, uint8_t *arrayToWriteTo)
+{
+	uint8_t lsb = byte & 0x0F;
+	uint8_t msb = (byte & 0xF0) >> 4;
 
-    printf("DEC: %d\n", byteArray[0]);
-    printf("HEX: %x\n\n", byteArray[0]);
-    
-    //return (amountOfReadItems);
+	arrayToWriteTo[0] = mergeOneByte(msb, msbParity);
+	arrayToWriteTo[1] = mergeOneByte(lsb, lsbParity);
 }
 
 uint8_t checkParityBit(uint8_t byte, uint8_t parityBit)
@@ -128,6 +125,8 @@ encode(int argc, char * argv[])
 		printf("LSB: 0x0%d\n", lsbParity);
 		printf("MSB: 0x0%x\n", msbParity);
 		
+		uint8_t finalArray[2];
+		mergeNibblesAndParity(byteArray[0], lsbParity, msbParity, finalArray);
 	}
     return (0);
 }
