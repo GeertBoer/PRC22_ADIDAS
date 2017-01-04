@@ -28,35 +28,9 @@ void getByteArrayFromFile(char *fileToRead, uint8_t *byteArray, int byteArraySiz
     //return (amountOfReadItems);
 }
 
-
-/*
-int check(uint8_t incomingByte)
-{
-	uint8_t MSN =>> incomingByte;
-	uint8_t LSB = (incomingByte =& 0x0F);
-
-}
-*/
-/*
-uint8_t check2(uint8_t incomingNibble)
-{
-	uint8_t incoming = incomingNibble;
-	uint8_t tmp = (incomingNibble << 4);
-	incoming |= tmp;
-
-	uint8_t mask = 0x07;
-	uint8_t amountOfSetBits = 0;
-	for (int i = 1; i <= 4; i++)
-	{
-		amountOfSetBits += (incoming & mask);
-		mask <<= 1;
-	}
-
-	return amountOfSetBits;
-}
-*/
 uint8_t checkParityBit(uint8_t byte, uint8_t parityBit)
 {
+	printf("%s\n", "sleep");
 	//0b00000110;
 	uint8_t offset = 0;
 
@@ -88,18 +62,21 @@ uint8_t checkParityBit(uint8_t byte, uint8_t parityBit)
 		}
 		mask <<= 1;
 	}
-
+	printf("%s\n", "fleep matoodle");
 	return (amount & 0x01);
 }
 
-uint8_t checkNibble(uint8_t byte, uint8_t *parityArray)
+uint8_t checkNibble(uint8_t byte, uint8_t *parity)
 {
-	uint8_t byteToSend = byte;
-	byteToSend |= (byte << 4);
+	uint8_t byteToCheck = byte;
+	byteToCheck |= (byte << 4);
+
+	*parity = 0;
 
 	for (int i = 0; i < 3; i++)
 	{
-		parityArray[i] = checkParityBit(byteToSend, i);
+		*parity |= checkParityBit(byteToCheck, i);
+		*parity <<= 1;
 	}
 
 	return 0;
@@ -109,13 +86,19 @@ uint8_t checkByte(uint8_t byte, uint8_t *lsbParity, uint8_t *msbParity)
 {
 	uint8_t LSB = byte & 0x0F;
 	uint8_t MSB = (byte & 0xF0) >> 4;
+	uint8_t parityLSB = 0;
+	uint8_t parityMSB = 0;
 
-	checkNibble(LSB, lsbParity);
-	checkNibble(MSB, msbParity);
+	checkNibble(MSB, &parityMSB);
+	checkNibble(LSB, &parityLSB);
+
+	*lsbParity = parityLSB;
+	*msbParity = parityMSB;
 
 	return 0;
 }
 
+//FREAD PROTOTYPE:
 //size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream);
 
 
@@ -136,26 +119,44 @@ encode(int argc, char * argv[])
 	    getByteArrayFromFile(input, byteArray, 20);
 
 
-		uint8_t lsbParity[3];
-		uint8_t msbParity[3];
-
-		uint8_t check = checkByte(byteArray[0], lsbParity, msbParity);
+		uint8_t lsbParity = 0;
+		uint8_t msbParity = 0;
+		printf("%s\n", "hpoi");
+		uint8_t check = checkByte(byteArray[0], &lsbParity, &msbParity);
+		printf("%s\n", "PEEPLEOI");
 		uint8_t dummy = check;
 		check = dummy;
 
-		printf("\n");
-
-		for (int i = 0; i <= 2; i++)
-		{
-			printf("LSB: p%d: %d\n", i, lsbParity[i]);
-		}
-
-		printf("\n");
-
-		for (int i = 0; i <= 2; i++)
-		{
-			printf("MSB: p%d: %d\n", i, msbParity[i]);
-		}
+		printf("LSB: 0x0%x\n", lsbParity);
+		printf("MSB: 0x0%x\n", msbParity);
+		
 	}
     return (0);
 }
+
+/*
+int check(uint8_t incomingByte)
+{
+	uint8_t MSN =>> incomingByte;
+	uint8_t LSB = (incomingByte =& 0x0F);
+
+}
+*/
+/*
+uint8_t check2(uint8_t incomingNibble)
+{
+	uint8_t incoming = incomingNibble;
+	uint8_t tmp = (incomingNibble << 4);
+	incoming |= tmp;
+
+	uint8_t mask = 0x07;
+	uint8_t amountOfSetBits = 0;
+	for (int i = 1; i <= 4; i++)
+	{
+		amountOfSetBits += (incoming & mask);
+		mask <<= 1;
+	}
+
+	return amountOfSetBits;
+}
+*/
