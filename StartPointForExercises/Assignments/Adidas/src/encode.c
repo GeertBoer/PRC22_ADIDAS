@@ -23,17 +23,15 @@ void getByteArrayFromFile(char *fileToRead, uint8_t *byteArray, int byteArraySiz
     int dummy = amountOfReadItems;
     amountOfReadItems = dummy;
 
-    printf("%d\n", byteArray[0]);
+    printf("DEC: %d\n", byteArray[0]);
+    printf("HEX: %x\n\n", byteArray[0]);
     
     //return (amountOfReadItems);
 }
 
 uint8_t checkParityBit(uint8_t byte, uint8_t parityBit)
 {
-	printf("%s\n", "sleep");
-	//0b00000110;
 	uint8_t offset = 0;
-
 	switch (parityBit)
 	{
 		case 0:
@@ -49,7 +47,7 @@ uint8_t checkParityBit(uint8_t byte, uint8_t parityBit)
 			return -1;
 	}
 
-	uint8_t amount = 0;
+	uint8_t hasParity = 0;
 
 	uint8_t mask = 0x01;
 	mask <<= offset;
@@ -58,12 +56,12 @@ uint8_t checkParityBit(uint8_t byte, uint8_t parityBit)
 	{
 		if (mask & byte)
 		{
-			amount++;
+			hasParity++;
 		}
 		mask <<= 1;
 	}
-	printf("%s\n", "fleep matoodle");
-	return (amount & 0x01);
+
+	return (hasParity & 0x01);
 }
 
 uint8_t checkNibble(uint8_t byte, uint8_t *parity)
@@ -75,8 +73,8 @@ uint8_t checkNibble(uint8_t byte, uint8_t *parity)
 
 	for (int i = 0; i < 3; i++)
 	{
-		*parity |= checkParityBit(byteToCheck, i);
 		*parity <<= 1;
+		*parity |= checkParityBit(byteToCheck, i);
 	}
 
 	return 0;
@@ -114,20 +112,20 @@ encode(int argc, char * argv[])
 	    strcpy(output, argv[2]);
 	    int mode = atoi(argv[3]);
 
-	    printf("\nresults: %s %s %d\n", input, output, mode);
+	    printf("\nResults: %s %s %d\n\n", input, output, mode);
 	    uint8_t byteArray[20];
 	    getByteArrayFromFile(input, byteArray, 20);
 
 
 		uint8_t lsbParity = 0;
 		uint8_t msbParity = 0;
-		printf("%s\n", "hpoi");
+
 		uint8_t check = checkByte(byteArray[0], &lsbParity, &msbParity);
-		printf("%s\n", "PEEPLEOI");
+
 		uint8_t dummy = check;
 		check = dummy;
 
-		printf("LSB: 0x0%x\n", lsbParity);
+		printf("LSB: 0x0%d\n", lsbParity);
 		printf("MSB: 0x0%x\n", msbParity);
 		
 	}
