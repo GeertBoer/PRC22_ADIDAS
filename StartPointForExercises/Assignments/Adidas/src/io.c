@@ -2,7 +2,7 @@
 #include "io.h"
 #include "resource_detector.h"
 
-void getByteArrayFromFile(char *fileToRead, uint8_t *byteArray, int byteArraySize)
+void getByteArrayFromFile(char *fileToRead, uint8_t *byteArray, int byteArraySize, int *amountOfBytesInFile)
 {
 	FILE *fp;
     char filemode = 'r';
@@ -20,6 +20,8 @@ void getByteArrayFromFile(char *fileToRead, uint8_t *byteArray, int byteArraySiz
     printf("DEC: %d\n", byteArray[0]);
     printf("HEX: %x\n\n", byteArray[0]);
 
+    *amountOfBytesInFile = sizeOfFile;
+    
     fclose(fp);
 }
 

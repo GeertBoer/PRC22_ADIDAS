@@ -4,6 +4,6 @@
 #include "io.h"
 #include "stdint.h"
 
-void getByteArrayFromFile(char *fileToRead, uint8_t *byteArray, int byteArraySize);
+void getByteArrayFromFile(char *fileToRead, uint8_t *byteArray, int byteArraySize, int *amountOfBytesInFile);
 
 #endif

@@ -77,7 +77,7 @@ uint8_t checkNibble(uint8_t byte, uint8_t *parity)
 	return 0;
 }
 
-uint8_t checkByte(uint8_t byte, uint8_t *lsbParity, uint8_t *msbParity)
+void checkByte(uint8_t byte, uint8_t *lsbParity, uint8_t *msbParity)
 {
 	uint8_t LSB = byte & 0x0F;
 	uint8_t MSB = (byte & 0xF0) >> 4;
@@ -89,8 +89,6 @@ uint8_t checkByte(uint8_t byte, uint8_t *lsbParity, uint8_t *msbParity)
 
 	*lsbParity = parityLSB;
 	*msbParity = parityMSB;
-
-	return 0;
 }
 
 //FREAD PROTOTYPE:
@@ -113,18 +111,19 @@ encode(int argc, char * argv[])
 	    uint8_t byteArray[20];
 	    getByteArrayFromFile(input, byteArray, 20);
 
-
 		uint8_t lsbParity = 0;
 		uint8_t msbParity = 0;
 
-		uint8_t check = checkByte(byteArray[0], &lsbParity, &msbParity);
+		checkByte(byteArray[0], &lsbParity, &msbParity);
 
-		uint8_t dummy = check;
-		check = dummy;
+		for (int i = 0; i < 20; i++)
+		{
+			printf("byteArray[%d]: 0x%x\n", i, byteArray[i]);
+		}
 
-		printf("LSB: 0x0%d\n", lsbParity);
+		printf("\nLSB: 0x0%d\n", lsbParity);
 		printf("MSB: 0x0%x\n", msbParity);
-		
+
 		uint8_t finalArray[2];
 		mergeNibblesAndParity(byteArray[0], lsbParity, msbParity, finalArray);
 	}
