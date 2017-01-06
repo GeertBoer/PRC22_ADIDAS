@@ -21,7 +21,7 @@ void getByteArrayFromFile(char *fileToRead, uint8_t *byteArray, int byteArraySiz
     printf("HEX: %x\n\n", byteArray[0]);
 
     *amountOfBytesInFile = sizeOfFile;
-    
+
     fclose(fp);
 }
 

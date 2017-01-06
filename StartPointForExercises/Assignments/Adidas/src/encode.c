@@ -7,6 +7,8 @@
 #include "io.h"
 #include "parity.h"
 
+#define MAX_SUPPORTED_INPUT_SIZE 50
+
 uint8_t mergeOneByte(uint8_t nibble, uint8_t parity)
 {
 	uint8_t workingByte = 0;
@@ -108,24 +110,42 @@ encode(int argc, char * argv[])
 	    int mode = atoi(argv[3]);
 
 	    printf("\nResults: %s %s %d\n\n", input, output, mode);
-	    uint8_t byteArray[20];
-	    getByteArrayFromFile(input, byteArray, 20);
 
-		uint8_t lsbParity = 0;
-		uint8_t msbParity = 0;
+	 
+	    uint8_t byteArray[MAX_SUPPORTED_INPUT_SIZE];
+	    int amountOfBytes = 0;
+	    getByteArrayFromFile(input, byteArray, 20, &amountOfBytes);
+	    if (amountOfBytes > MAX_SUPPORTED_INPUT_SIZE)
+	    {
+	    	printf("%s%d%s%d%s\n", "The chosen file is too big for this program (MAX ", MAX_SUPPORTED_INPUT_SIZE," BYTES, FILE WAS ", amountOfBytes, " BYTES BIG!)");
+	    	return -1;
+	    }
 
-		checkByte(byteArray[0], &lsbParity, &msbParity);
 
-		for (int i = 0; i < 20; i++)
-		{
-			printf("byteArray[%d]: 0x%x\n", i, byteArray[i]);
-		}
+	    int finalArraySize = 2 * amountOfBytes + 1;
+		uint8_t finalArray[finalArraySize];
+		finalArray[0] = 1;
 
-		printf("\nLSB: 0x0%d\n", lsbParity);
-		printf("MSB: 0x0%x\n", msbParity);
+		int counter = 1;
+	    for(int i = 0; i < amountOfBytes; i++)
+	    {
+	    	uint8_t lsbParity = 0;
+			uint8_t msbParity = 0;
 
-		uint8_t finalArray[2];
-		mergeNibblesAndParity(byteArray[0], lsbParity, msbParity, finalArray);
+			checkByte(byteArray[i], &lsbParity, &msbParity);
+
+			uint8_t mergingArray[2];
+
+			mergeNibblesAndParity(byteArray[i], lsbParity, msbParity, mergingArray);
+
+			for (int q = 0; q <= 1; q++)
+			{
+				finalArray[counter] = mergingArray[q];
+				counter++;
+			}
+	    }
+
+	    writeByteArrayToFile(output, finalArray, finalArraySize);
 	}
     return (0);
 }
