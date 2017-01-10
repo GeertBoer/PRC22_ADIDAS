@@ -4,6 +4,6 @@
 #include <stdint.h>
 #include "noise.h"
 
-int addNoise(uint8_t *byte, uint8_t bitToFlip);
+void addNoise(uint8_t *byte);
 
 #endif
