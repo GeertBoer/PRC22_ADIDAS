@@ -27,7 +27,7 @@ void mergeNibblesAndParity(uint8_t byte, uint8_t lsbParity, uint8_t msbParity, u
 	arrayToWriteTo[1] = mergeOneByte(lsb, lsbParity);
 }
 
-uint8_t checkParityBit(uint8_t byte, uint8_t parityBit)
+uint8_t checkParityLSN(uint8_t byte, uint8_t parityBit)
 {
 	uint8_t offset = 0;
 	switch (parityBit)
@@ -72,7 +72,7 @@ uint8_t checkNibble(uint8_t byte, uint8_t *parity)
 	for (int i = 0; i < 3; i++)
 	{
 		*parity <<= 1;
-		*parity |= checkParityBit(byteToCheck, i);
+		*parity |= checkParityLSN(byteToCheck, i);
 	}
 
 	return 0;
@@ -90,4 +90,51 @@ void checkByte(uint8_t byte, uint8_t *lsbParity, uint8_t *msbParity)
 
 	*lsbParity = parityLSB;
 	*msbParity = parityMSB;
+}
+
+void reverseParity(uint8_t sourceByte, uint8_t *parity)
+{
+	*parity = 0;
+	*parity |= (sourceByte & 0x07);
+}
+
+void correctParity(uint8_t *incomingByte)
+{
+    uint8_t parityOld = 0;
+    uint8_t parityNew = 0;
+    
+    reverseParity(*incomingByte, &parityOld);
+    checkNibble((*incomingByte >> 3), &parityNew);
+
+    uint8_t comparedParity = parityOld ^ parityNew;
+
+    int amountOfFailures = 0;
+    for (int i = 0; i < 3; ++i)
+    {
+    	amountOfFailures += ((comparedParity >> i) & 1);
+    }
+
+    if (amountOfFailures == 1)
+    {
+    	*incomingByte &= 0xF8;
+    	*incomingByte |= parityNew;
+    }
+    else
+    {
+	    switch (comparedParity)
+	    {
+	    	case 0x03:
+	    		*incomingByte ^= 0x08;
+	    		break;
+	    	case 0x05:
+	    		*incomingByte ^= 0x20;
+	    		break;
+	    	case 0x06:
+	    		*incomingByte ^= 0x40;
+	    		break;
+	    	case 0x07:
+	    		*incomingByte ^= 0x10;
+	    		break;
+	    }
+	}
 }

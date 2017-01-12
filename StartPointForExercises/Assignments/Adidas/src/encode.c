@@ -58,6 +58,8 @@ encode(int argc, char * argv[])
 
 	    writeByteArrayToFile(output, finalArray, finalArraySize);
 	}
+	else printf("\n########## %s ##\n", "Too few arguments!");
+	
     return (0);
 }
 

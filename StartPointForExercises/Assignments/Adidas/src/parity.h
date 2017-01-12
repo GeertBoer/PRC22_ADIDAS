@@ -6,14 +6,14 @@
 
 #define MAX_SUPPORTED_INPUT_SIZE 50
 
-uint8_t mergeOneByte(uint8_t nibble, uint8_t parity);
-
 void mergeNibblesAndParity(uint8_t byte, uint8_t lsbParity, uint8_t msbParity, uint8_t *arrayToWriteTo);
 
-uint8_t checkParityBit(uint8_t byte, uint8_t parityBit);
+void checkByte(uint8_t byte, uint8_t *lsbParity, uint8_t *msbParity);
+
+void reverseParity(uint8_t sourceByte, uint8_t *parity);
 
 uint8_t checkNibble(uint8_t byte, uint8_t *parity);
 
-void checkByte(uint8_t byte, uint8_t *lsbParity, uint8_t *msbParity);
+void correctParity(uint8_t *incomingByte);
 
 #endif
