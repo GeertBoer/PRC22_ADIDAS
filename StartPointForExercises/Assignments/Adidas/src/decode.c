@@ -11,6 +11,34 @@
 extern int
 decode (int argc, char * argv[])
 {
+	int arraysize = 100;
+	uint8_t dummyArray[arraysize];
+	uint8_t outarray[arraysize];
+	for (int i = 0; i < arraysize; ++i)
+	{
+		dummyArray[i] = 0x03;
+		outarray[i] = 0;
+	}
+
+	int outputArraySize = 0;
+
+	convertToMode2(dummyArray, outarray, arraysize, &outputArraySize);
+
+	for (int i = 0; i < arraysize; ++i)
+	{
+		printf("%d: %x\n", i, outarray[i]);
+	}
+
+	char output1[20];
+	strcpy(output1, argv[1]);
+	writeByteArrayToFile(output1, dummyArray, arraysize);
+
+	char output2[20];
+	strcpy(output2, argv[2]);
+	writeByteArrayToFile(output2, outarray, arraysize);
+
+
+/*
     char input[20];
     char output[20];
 
@@ -30,19 +58,19 @@ decode (int argc, char * argv[])
     }
 
     uint8_t newByteArray[amountOfBytes / 2];
-    int counter = 0;
+    int amountOfBytesInNewByteArray = 0;
     for (int i = 1; i < amountOfBytes; i += 2)
     {
     	correctParity(&byteArray[i]);
-    	correctParity(&byteArray[counter + 1]);
+    	correctParity(&byteArray[i + 1]);
     	uint8_t MSN = ((byteArray[i] << 1) & 0xF0);
     	uint8_t LSN = ((byteArray[i + 1] >> 3) & 0x0F);
-    	newByteArray[counter] = (MSN | LSN);
-    	counter++;;
+    	newByteArray[amountOfBytesInNewByteArray] = (MSN | LSN);
+    	amountOfBytesInNewByteArray++;
     }
 
-    writeByteArrayToFile(output, byteArray, amountOfBytes);
-
+    writeByteArrayToFile(output, newByteArray, amountOfBytesInNewByteArray);
+*/
     return (0);
 }
 
