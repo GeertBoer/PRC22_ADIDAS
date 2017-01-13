@@ -38,27 +38,71 @@ void writeByteArrayToFile(char *fileToWrite, uint8_t *byteArray, int byteArraySi
 
 void convertToMode2(uint8_t *inputArray, uint8_t *outputArray, int inputArraySize, int *outputArraySize)
 {
-	uint8_t inputBit = 0;
-	uint8_t outputBit = 7;
-	int inputArrayPos = 0;
-	int outputArrayPos = 0;
-
-	while(inputArrayPos < inputArraySize)
+	if (inputArray[0] == 1)
 	{
-		outputArray[outputArrayPos] |= (((inputArray[inputArrayPos] & (1 << inputBit)) >> inputBit) << outputBit);
-		if (inputBit >= 6)
-		{
-			inputBit = 0;
-			inputArrayPos++;
+		printf("This file IS MODE 1\n");
+		uint8_t inputBit = 0;
+		uint8_t outputBit = 7;
+		int inputArrayPos = 1;
+		int outputArrayPos = 1;
 
-		} else inputBit++;
-		if (outputBit <= 0)
+		while(inputArrayPos < inputArraySize)
 		{
-			outputBit = 7;
-			outputArrayPos++;
-		} else outputBit--;
-	} 
+			outputArray[outputArrayPos] |= (((inputArray[inputArrayPos] & (1 << inputBit)) >> inputBit) << outputBit);
+			if (inputBit >= 6)
+			{
+				inputBit = 0;
+				inputArrayPos++;
 
-	printf("outputArrayPos: %d\n", outputArrayPos);
-	printf("inputArrayPos: %d\n", inputArrayPos);
+			} else inputBit++;
+			if (outputBit <= 0)
+			{
+				outputBit = 7;
+				outputArrayPos++;
+			} else outputBit--;
+		} 
+
+		printf("outputArrayPos: %d\n", outputArrayPos);
+		printf("inputArrayPos: %d\n", inputArrayPos);
+
+		outputArray[0] = 2;
+		*outputArraySize = outputArrayPos;
+	} else printf("This file IS NOT MODE 1\n");
+}
+
+void convertToMode1(uint8_t *inputArray, uint8_t *outputArray, int inputArraySize, int *outputArraySize)
+{ 
+	printf("inputArray[0]%d\n", inputArray[0]);
+	if (inputArray[0] == 2)
+	{
+		printf("This file IS MODE 2\n");
+
+		uint8_t inputBit = 7;
+		uint8_t outputBit = 0;
+		int inputArrayPos = 1;
+		int outputArrayPos = 1;
+
+		while(inputArrayPos < inputArraySize)
+		{
+			outputArray[outputArrayPos] |= (((inputArray[inputArrayPos] & (1 << inputBit)) >> inputBit) << outputBit);
+			if (inputBit <= 0)
+			{
+				inputBit = 7;
+				inputArrayPos++;
+
+			} else inputBit--;
+			if (outputBit >= 6)
+			{
+				outputBit = 0;
+				outputArrayPos++;
+			} else outputBit++;
+		}
+
+		printf("outputArrayPos: %d\n", outputArrayPos);
+		printf("inputArrayPos: %d\n", inputArrayPos);
+
+		outputArray[0] = 1;
+		*outputArraySize = outputArrayPos;
+	}
+	else printf("This file IS NOT MODE 2\n");
 }

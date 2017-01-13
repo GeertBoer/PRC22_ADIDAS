@@ -69,7 +69,7 @@ uint8_t checkNibble(uint8_t byte, uint8_t *parity)
 
 	*parity = 0;
 
-	for (int i = 0; i < 3; i++)
+	for (int i = 2; i >= 0; i--)
 	{
 		*parity <<= 1;
 		*parity |= checkParityLSN(byteToCheck, i);
@@ -137,4 +137,35 @@ void correctParity(uint8_t *incomingByte)
 	    		break;
 	    }
 	}
+}
+
+
+void correct2(uint8_t *incomingByte)
+{
+	uint8_t parityOld = 0;
+    uint8_t parityNew = 0;
+    
+    reverseParity(*incomingByte, &parityOld);
+    checkNibble((*incomingByte >> 3), &parityNew);
+
+    uint8_t comparedParity = (parityOld ^ parityNew);
+    uint8_t comparedParityIsOddOrEven = 0;
+    for (int i = 0; i < 3; ++i)
+    {
+    	comparedParityIsOddOrEven ^= ((comparedParity >> i) & 1);
+    }
+
+    uint8_t allParityWrong = 1;
+    for (int i = 0; i < 3; ++i)
+    {
+    	allParityWrong &= ((comparedParity >> i) & 1);
+    }
+    if(allParityWrong)
+    {
+    	*incomingByte ^= 4;
+    }
+    printf("comparedParityIsOddOrEven: %x\n", comparedParityIsOddOrEven);
+    *incomingByte ^= (1 << (comparedParity - (comparedParityIsOddOrEven + (comparedParityIsOddOrEven * 2))));
+
+    // *incomingByte ^= (1 << (comparedParity - comparedParityIsOddOrEven + (allParityWrong * 2)));
 }

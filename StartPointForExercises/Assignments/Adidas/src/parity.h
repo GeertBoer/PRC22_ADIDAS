@@ -16,4 +16,6 @@ uint8_t checkNibble(uint8_t byte, uint8_t *parity);
 
 void correctParity(uint8_t *incomingByte);
 
+void correct2(uint8_t *incomingByte);
+
 #endif
