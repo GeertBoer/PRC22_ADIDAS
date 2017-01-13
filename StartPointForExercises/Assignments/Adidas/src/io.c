@@ -25,17 +25,17 @@ void convertToMode(uint8_t *arrayToConvert, int *arraySize, int modeToConvertTo)
 
 		if (modeToConvertTo == 2)
 		{
-			inputBit = 0;
+			printf("Convering to Mode 2\n");
+			inputBit = 6;
 			outputBit = 7;
 			while(inputArrayPos < inputArraySize)
 			{
 				arrayToConvert[outputArrayPos] |= (((tmpArray[inputArrayPos] & (1 << inputBit)) >> inputBit) << outputBit);
-				if (inputBit >= 6)
+				if (inputBit <= 0)
 				{
-					inputBit = 0;
+					inputBit = 6;
 					inputArrayPos++;
-
-				} else inputBit++;
+				} else inputBit--;
 				if (outputBit <= 0)
 				{
 					outputBit = 7;
@@ -46,6 +46,7 @@ void convertToMode(uint8_t *arrayToConvert, int *arraySize, int modeToConvertTo)
 		}
 		else if (modeToConvertTo == 1)
 		{
+			printf("Converting to Mode 1\n");
 			inputBit = 7;
 			outputBit = 0;
 			while(inputArrayPos < inputArraySize)
@@ -59,7 +60,7 @@ void convertToMode(uint8_t *arrayToConvert, int *arraySize, int modeToConvertTo)
 				} else inputBit--;
 				if (outputBit >= 6)
 				{
-					outputBit = 0;
+					outputBit = 6;
 					outputArrayPos++;
 				} else outputBit++;
 			}
@@ -69,7 +70,7 @@ void convertToMode(uint8_t *arrayToConvert, int *arraySize, int modeToConvertTo)
 		printf("outputArrayPos: %d\n", outputArrayPos);
 		printf("inputArrayPos: %d\n", inputArrayPos);
 
-		*arraySize = outputArrayPos;
+		*arraySize = (outputArrayPos + 1);
 	} else printf("This file IS MODE %d, modeToConvertTo = %d\n", arrayToConvert[0], modeToConvertTo);
 }
 

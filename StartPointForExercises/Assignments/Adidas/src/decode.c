@@ -11,7 +11,22 @@
 extern int
 decode (int argc, char * argv[])
 {
+	char input[20];
+    char output[20];
 
+    strcpy(input, argv[1]);
+    strcpy(output, argv[2]);
+    int mode = atoi(argv[3]);
+
+    printf("\nResults: %s %s %d\n\n", input, output, mode);
+ 
+    uint8_t byteArray[MAX_SUPPORTED_INPUT_SIZE];
+    int amountOfBytes = 0;
+    getByteArrayFromFile(input, byteArray, 20, &amountOfBytes);	
+
+    convertToMode(byteArray, &amountOfBytes, 2);
+
+    writeByteArrayToFile(output, byteArray, amountOfBytes);
 
 	/*  DIT WERKT!
     char input[20];
