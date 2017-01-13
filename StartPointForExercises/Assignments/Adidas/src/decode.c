@@ -24,7 +24,7 @@ decode (int argc, char * argv[])
     int amountOfBytes = 0;
     getByteArrayFromFile(input, byteArray, 20, &amountOfBytes);	
 
-    convertToMode(byteArray, &amountOfBytes, 2);
+    convertToMode(byteArray, &amountOfBytes, 1);
 
     writeByteArrayToFile(output, byteArray, amountOfBytes);
 
