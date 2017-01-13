@@ -4,8 +4,6 @@
 #include <stdint.h>
 #include "parity.h"
 
-#define MAX_SUPPORTED_INPUT_SIZE 50
-
 void mergeNibblesAndParity(uint8_t byte, uint8_t lsbParity, uint8_t msbParity, uint8_t *arrayToWriteTo);
 
 void checkByte(uint8_t byte, uint8_t *lsbParity, uint8_t *msbParity);

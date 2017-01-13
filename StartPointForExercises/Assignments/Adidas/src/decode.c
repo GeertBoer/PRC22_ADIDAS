@@ -6,11 +6,14 @@
 #include "io.h"
 #include "parity.h"
 
-#define MAX_SUPPORTED_INPUT_SIZE 50
+#define MAX_SUPPORTED_INPUT_SIZE 73
 
 extern int
 decode (int argc, char * argv[])
 {
+
+
+	/*  DIT WERKT!
     char input[20];
     char output[20];
 
@@ -42,7 +45,7 @@ decode (int argc, char * argv[])
     }
 
     writeByteArrayToFile(output, newByteArray, amountOfBytesInNewByteArray);
-
+*/
     return (0);
 }
 

@@ -2,11 +2,83 @@
 #include "io.h"
 #include "resource_detector.h"
 
+#define MAX_SUPPORTED_INPUT_SIZE 50
+
+void convertToMode(uint8_t *arrayToConvert, int *arraySize, int modeToConvertTo)
+{
+	if (arrayToConvert[0] != modeToConvertTo)
+	{
+		int inputArraySize = *arraySize;
+
+		printf("This file IS MODE %d\n", modeToConvertTo);
+		uint8_t inputBit = 0;
+		uint8_t outputBit = 0;
+		int inputArrayPos = 1;
+		int outputArrayPos = 1;
+
+		uint8_t tmpArray[inputArraySize];
+		for (int i = 0; i < inputArraySize; ++i)
+		{
+			tmpArray[i] = arrayToConvert[i];
+			arrayToConvert[i] = 0;
+		}
+
+		if (modeToConvertTo == 2)
+		{
+			inputBit = 0;
+			outputBit = 7;
+			while(inputArrayPos < inputArraySize)
+			{
+				arrayToConvert[outputArrayPos] |= (((tmpArray[inputArrayPos] & (1 << inputBit)) >> inputBit) << outputBit);
+				if (inputBit >= 6)
+				{
+					inputBit = 0;
+					inputArrayPos++;
+
+				} else inputBit++;
+				if (outputBit <= 0)
+				{
+					outputBit = 7;
+					outputArrayPos++;
+				} else outputBit--;
+			}
+			arrayToConvert[0] = modeToConvertTo; 
+		}
+		else if (modeToConvertTo == 1)
+		{
+			inputBit = 7;
+			outputBit = 0;
+			while(inputArrayPos < inputArraySize)
+			{
+				arrayToConvert[outputArrayPos] |= (((tmpArray[inputArrayPos] & (1 << inputBit)) >> inputBit) << outputBit);
+				if (inputBit <= 0)
+				{
+					inputBit = 7;
+					inputArrayPos++;
+
+				} else inputBit--;
+				if (outputBit >= 6)
+				{
+					outputBit = 0;
+					outputArrayPos++;
+				} else outputBit++;
+			}
+			arrayToConvert[0] = modeToConvertTo;
+		}
+
+		printf("outputArrayPos: %d\n", outputArrayPos);
+		printf("inputArrayPos: %d\n", inputArrayPos);
+
+		*arraySize = outputArrayPos;
+	} else printf("This file IS MODE %d, modeToConvertTo = %d\n", arrayToConvert[0], modeToConvertTo);
+}
+
 void getByteArrayFromFile(char *fileToRead, uint8_t *byteArray, int byteArraySize, int *amountOfBytesInFile)
 {
 	FILE *fp;
     char filemode = 'r';
     fp = fopen(fileToRead, &filemode);
+
 
     fseek(fp, 0L, SEEK_SET);
     fseek(fp, 0L, SEEK_END);
@@ -14,11 +86,11 @@ void getByteArrayFromFile(char *fileToRead, uint8_t *byteArray, int byteArraySiz
     fseek(fp, 0L, SEEK_SET);
 
     int amountOfReadItems = fread(byteArray, 1, sizeOfFile, fp);
-    int dummy = amountOfReadItems;
-    amountOfReadItems = dummy;
 
-    printf("DEC: %d\n", byteArray[0]);
-    printf("HEX: %x\n\n", byteArray[0]);
+    if(sizeOfFile != amountOfReadItems)
+    {
+    	printf("NOT ENOUGH ITEMS READ\n");
+    }
 
     *amountOfBytesInFile = sizeOfFile;
 
@@ -36,39 +108,7 @@ void writeByteArrayToFile(char *fileToWrite, uint8_t *byteArray, int byteArraySi
 	fclose(fp);
 }
 
-void convertToMode2(uint8_t *inputArray, uint8_t *outputArray, int inputArraySize, int *outputArraySize)
-{
-	if (inputArray[0] == 1)
-	{
-		printf("This file IS MODE 1\n");
-		uint8_t inputBit = 0;
-		uint8_t outputBit = 7;
-		int inputArrayPos = 1;
-		int outputArrayPos = 1;
 
-		while(inputArrayPos < inputArraySize)
-		{
-			outputArray[outputArrayPos] |= (((inputArray[inputArrayPos] & (1 << inputBit)) >> inputBit) << outputBit);
-			if (inputBit >= 6)
-			{
-				inputBit = 0;
-				inputArrayPos++;
-
-			} else inputBit++;
-			if (outputBit <= 0)
-			{
-				outputBit = 7;
-				outputArrayPos++;
-			} else outputBit--;
-		} 
-
-		printf("outputArrayPos: %d\n", outputArrayPos);
-		printf("inputArrayPos: %d\n", inputArrayPos);
-
-		outputArray[0] = 2;
-		*outputArraySize = outputArrayPos;
-	} else printf("This file IS NOT MODE 1\n");
-}
 
 void convertToMode1(uint8_t *inputArray, uint8_t *outputArray, int inputArraySize, int *outputArraySize)
 { 
