@@ -42,7 +42,8 @@ void convertToMode(uint8_t *arrayToConvert, int *arraySize, int modeToConvertTo)
 					outputArrayPos++;
 				} else outputBit--;
 			}
-			outputArrayPos++;
+			
+			*arraySize = outputArrayPos;
 			arrayToConvert[0] = modeToConvertTo; 
 		}
 		else if (modeToConvertTo == 1)
@@ -65,17 +66,24 @@ void convertToMode(uint8_t *arrayToConvert, int *arraySize, int modeToConvertTo)
 					outputArrayPos++;
 				} else outputBit--;
 			}
+
 			arrayToConvert[0] = modeToConvertTo;
+			*arraySize = outputArrayPos;
+		}
+		else
+		{
+			printf("INVALID MODE SELECTED\n");
+			return;
 		}
 
 		printf("outputArrayPos: %d\n", outputArrayPos);
 		printf("inputArrayPos: %d\n", inputArrayPos);
 
-		*arraySize = outputArrayPos;
+		
 	} else printf("This file IS MODE %d, modeToConvertTo = %d\n", arrayToConvert[0], modeToConvertTo);
 }
 
-void getByteArrayFromFile(char *fileToRead, uint8_t *byteArray, int byteArraySize, int *amountOfBytesInFile)
+void getByteArrayFromFile(char *fileToRead, uint8_t *byteArray, int byteArraySize, int *amountOfBytesInFile, int requiredMode)
 {
 	FILE *fp;
     char filemode = 'r';
@@ -87,11 +95,14 @@ void getByteArrayFromFile(char *fileToRead, uint8_t *byteArray, int byteArraySiz
     int sizeOfFile = ftell(fp);
     fseek(fp, 0L, SEEK_SET);
 
-    int amountOfReadItems = fread(byteArray, 1, sizeOfFile, fp);
+    sizeOfFile = fread(byteArray, 1, sizeOfFile, fp);
 
-    if(sizeOfFile != amountOfReadItems)
+    if (requiredMode == 1 || requiredMode == 2)
     {
-    	printf("NOT ENOUGH ITEMS READ\n");
+    	if (byteArray[0] != requiredMode)
+    	{
+    		convertToMode(byteArray, &sizeOfFile, requiredMode);
+    	}
     }
 
     *amountOfBytesInFile = sizeOfFile;
@@ -99,13 +110,25 @@ void getByteArrayFromFile(char *fileToRead, uint8_t *byteArray, int byteArraySiz
     fclose(fp);
 }
 
-void writeByteArrayToFile(char *fileToWrite, uint8_t *byteArray, int byteArraySize)
+void writeByteArrayToFile(char *fileToWrite, uint8_t *byteArray, int *byteArraySize, int requiredMode)
 {
 	FILE *fp;
 	char filemode = 'w';
 	fp = fopen(fileToWrite, &filemode);
 
-	fwrite(byteArray, 1, byteArraySize, fp);
+
+	printf("requiredMode: %d\n", requiredMode);
+	printf("byteArray[0]%d\n", byteArray[0]);
+
+	if (requiredMode == 1 || requiredMode == 2)
+    {
+    	if (byteArray[0] != requiredMode)
+    	{
+    		convertToMode(byteArray, byteArraySize, requiredMode);
+    	}
+    }
+
+	fwrite(byteArray, 1, *byteArraySize, fp);
 
 	fclose(fp);
 }

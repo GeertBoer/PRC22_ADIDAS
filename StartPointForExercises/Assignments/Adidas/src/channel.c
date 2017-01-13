@@ -8,7 +8,7 @@
 #include "io.h"
 #include "noise.h"
 
-#define MAX_SUPPORTED_INPUT_SIZE 50
+#define MAX_SUPPORTED_INPUT_SIZE 700
 
 extern int 
 channel(int argc, char * argv[])
@@ -25,14 +25,16 @@ channel(int argc, char * argv[])
 		uint8_t byteArray[MAX_SUPPORTED_INPUT_SIZE];
 		int amountOfBytesInArray = 0;
 
-		getByteArrayFromFile(input, byteArray, MAX_SUPPORTED_INPUT_SIZE, &amountOfBytesInArray);
+
+		getByteArrayFromFile(input, byteArray, MAX_SUPPORTED_INPUT_SIZE, &amountOfBytesInArray, 0);
+		printf("amountOfBytesInArray: %d    MAX_SUPPORTED_INPUT_SIZE: %d\n", amountOfBytesInArray, MAX_SUPPORTED_INPUT_SIZE);
 
 		for(int i = 0; i <= amountOfBytesInArray; i += 2)
 		{
 			addNoise(&byteArray[i]);
 		}
 
-		writeByteArrayToFile(output, byteArray, amountOfBytesInArray);
+		writeByteArrayToFile(output, byteArray, &amountOfBytesInArray, 0);
 	}
 
     return (0);

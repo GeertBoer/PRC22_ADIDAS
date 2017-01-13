@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 #include "noise.h"
-#include "encode.h"
+
 
 void checkNoise(uint8_t old, uint8_t new)
 {

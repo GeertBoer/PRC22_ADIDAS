@@ -6,47 +6,29 @@
 #include "io.h"
 #include "parity.h"
 
-#define MAX_SUPPORTED_INPUT_SIZE 73
+#define MAX_SUPPORTED_INPUT_SIZE 800
 
 extern int
 decode (int argc, char * argv[])
 {
-	char input[20];
-    char output[20];
-
-    strcpy(input, argv[1]);
-    strcpy(output, argv[2]);
-    int mode = atoi(argv[3]);
-
-    printf("\nResults: %s %s %d\n\n", input, output, mode);
- 
-    uint8_t byteArray[MAX_SUPPORTED_INPUT_SIZE];
-    int amountOfBytes = 0;
-    getByteArrayFromFile(input, byteArray, 20, &amountOfBytes);	
-
-    convertToMode(byteArray, &amountOfBytes, 1);
-
-    writeByteArrayToFile(output, byteArray, amountOfBytes);
-
-	/*  DIT WERKT!
     char input[20];
     char output[20];
 
     strcpy(input, argv[1]);
     strcpy(output, argv[2]);
-    int mode = atoi(argv[3]);
 
-    printf("\nResults: %s %s %d\n\n", input, output, mode);
+    printf("\nResults: %s %s\n\n", input, output);
  
     uint8_t byteArray[MAX_SUPPORTED_INPUT_SIZE];
     int amountOfBytes = 0;
-    getByteArrayFromFile(input, byteArray, 20, &amountOfBytes);
+    getByteArrayFromFile(input, byteArray, 20, &amountOfBytes, 1);
     if (amountOfBytes > MAX_SUPPORTED_INPUT_SIZE)
     {
     	printf("%s%d%s%d%s\n", "The chosen file is too big for this program (MAX ", MAX_SUPPORTED_INPUT_SIZE," BYTES, FILE WAS ", amountOfBytes, " BYTES BIG!)");
     	return -1;
     }
 
+    printf("decode amountOfBytes= %d\n", amountOfBytes);
     uint8_t newByteArray[amountOfBytes / 2];
     int amountOfBytesInNewByteArray = 0;
     for (int i = 1; i < amountOfBytes; i += 2)
@@ -59,8 +41,9 @@ decode (int argc, char * argv[])
     	amountOfBytesInNewByteArray++;
     }
 
-    writeByteArrayToFile(output, newByteArray, amountOfBytesInNewByteArray);
-*/
+    printf("decode amountOfBytesInNewByteArray= %d\n", amountOfBytesInNewByteArray);
+    writeByteArrayToFile(output, newByteArray, &amountOfBytesInNewByteArray, 0);
+    printf("decode amountOfBytesInNewByteArray 2= %d\n", amountOfBytesInNewByteArray);
     return (0);
 }
 
@@ -102,3 +85,25 @@ decode (int argc, char * argv[])
 	strcpy(output3, argv[3]);
 	writeByteArrayToFile(output3, outarray, outputArraySize);
 	*/
+
+
+
+/*  	MODE1 MODE2 EXAMPLE
+char input[20];
+    char output[20];
+
+    strcpy(input, argv[1]);
+    strcpy(output, argv[2]);
+    int mode = atoi(argv[3]);
+
+    printf("\nResults: %s %s %d\n\n", input, output, mode);
+ 
+    uint8_t byteArray[MAX_SUPPORTED_INPUT_SIZE];
+    int amountOfBytes = 0;
+    getByteArrayFromFile(input, byteArray, 20, &amountOfBytes);	
+
+    convertToMode(byteArray, &amountOfBytes, 2);
+    convertToMode(byteArray, &amountOfBytes, 1);
+
+    writeByteArrayToFile(output, byteArray, amountOfBytes);
+    */

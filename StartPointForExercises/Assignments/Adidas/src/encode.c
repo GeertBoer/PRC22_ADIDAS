@@ -7,6 +7,8 @@
 #include "io.h"
 #include "parity.h"
 
+#define MAX_SUPPORTED_INPUT_SIZE 350
+
 
 extern int 
 encode(int argc, char * argv[])
@@ -25,11 +27,16 @@ encode(int argc, char * argv[])
 	 
 	    uint8_t byteArray[MAX_SUPPORTED_INPUT_SIZE];
 	    int amountOfBytes = 0;
-	    getByteArrayFromFile(input, byteArray, 20, &amountOfBytes);
+	    getByteArrayFromFile(input, byteArray, 20, &amountOfBytes, 0);
 	    if (amountOfBytes > MAX_SUPPORTED_INPUT_SIZE)
 	    {
 	    	printf("%s%d%s%d%s\n", "The chosen file is too big for this program (MAX ", MAX_SUPPORTED_INPUT_SIZE," BYTES, FILE WAS ", amountOfBytes, " BYTES BIG!)");
 	    	return -1;
+	    }
+
+	    for (int i = 0; i < amountOfBytes; ++i)
+	    {
+	    	printf("Byte%d: %x\n", i, byteArray[i]);
 	    }
 
 
@@ -56,7 +63,7 @@ encode(int argc, char * argv[])
 			}
 	    }
 
-	    writeByteArrayToFile(output, finalArray, finalArraySize);
+	    writeByteArrayToFile(output, finalArray, &finalArraySize, mode);
 	}
 	else printf("\n########## %s ##\n", "Too few arguments!");
 	
